@@ -1,0 +1,10 @@
+{
+  "rest-client.environmentVariables": {
+    "dev": {
+      "baseUrl": "https://589tzcaozj.execute-api.us-east-2.amazonaws.com"
+    },
+    "production": {
+      "baseUrl": "https://589tzcaozj.execute-api.us-east-2.amazonaws.com"
+    }
+  }
+}

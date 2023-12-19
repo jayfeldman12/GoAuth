@@ -31,7 +31,7 @@ func main() {
 			log.Fatalf("Invalid file: %q", filename)
 		}
 
-		cleanFilename := strings.TrimSuffix(path.Base(filename), ".go")
+		cleanFilename := strings.TrimSuffix(path.Base(filename), "Cmd.go")
 		fmt.Printf("Using file %s\n", cleanFilename)
 		execute("mkdir -p dist")
 		_, err = os.Stat(fmt.Sprintf("dist/%q.zip", cleanFilename))
