@@ -6,10 +6,11 @@ import (
 
 func main() {
 	resources := []string{
-		// "./cmd/createUser/createUserCmd.go",
-		// "./cmd/confirmSignUp/confirmSignUpCmd.go",
+		"./cmd/createUser/createUserCmd.go",
+		"./cmd/confirmSignUp/confirmSignUpCmd.go",
 		"./cmd/login/loginCmd.go",
-		// "./cmd/securedResource/securedResourceCmd.go",
+		"./cmd/refreshToken/refreshTokenCmd.go",
+		"./cmd/securedResource/securedResourceCmd.go",
 	}
 	commandBase := "go run ./cmd/lambdaBuild/lambdaBuild.go -- "
 

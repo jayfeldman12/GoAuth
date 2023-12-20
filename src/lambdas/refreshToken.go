@@ -10,8 +10,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 )
 
-func Login(request events.APIGatewayV2HTTPRequest) (events.APIGatewayProxyResponse, error) {
-	var requestBody LoginRequest
+func RefreshToken(request events.APIGatewayV2HTTPRequest) (events.APIGatewayProxyResponse, error) {
+	var requestBody RefreshTokenRequest
 	err := json.Unmarshal([]byte(request.Body), &requestBody)
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error unmarshalling request %s", err)
@@ -19,20 +19,19 @@ func Login(request events.APIGatewayV2HTTPRequest) (events.APIGatewayProxyRespon
 		return events.APIGatewayProxyResponse{StatusCode: 400, Body: errorMessage}, nil
 	}
 
-	if requestBody.Username == nil || requestBody.Password == nil {
+	if requestBody.RefreshToken == nil {
 		errorMessage := "Error missing required fields"
 		log.Print(errorMessage)
 		return events.APIGatewayProxyResponse{StatusCode: 400, Body: errorMessage}, nil
 	}
 
 	authRequest := &cognitoidentityprovider.AdminInitiateAuthInput{
-		AuthFlow:   aws.String("ADMIN_USER_PASSWORD_AUTH"),
+		AuthFlow:   aws.String("REFRESH_TOKEN_AUTH"),
 		ClientId:   aws.String(AppContext.CognitoClientID),
 		UserPoolId: aws.String(AppContext.UserPoolID),
 		AuthParameters: map[string]*string{
-			"USERNAME":    requestBody.Username,
-			"PASSWORD":    requestBody.Password,
-			"SECRET_HASH": aws.String(ComputeSecretHash(*requestBody.Username)),
+			"REFRESH_TOKEN": aws.String(*requestBody.RefreshToken),
+			"SECRET_HASH":   aws.String(ComputeSecretHash(*requestBody.Username)),
 		},
 	}
 
@@ -44,10 +43,9 @@ func Login(request events.APIGatewayV2HTTPRequest) (events.APIGatewayProxyRespon
 	}
 
 	accessToken := *authResp.AuthenticationResult.AccessToken
-	refreshToken := *authResp.AuthenticationResult.RefreshToken
 	idToken := *authResp.AuthenticationResult.IdToken
 
-	responseBody, err := json.Marshal(LoginResponse{AccessToken: accessToken, RefreshToken: refreshToken, IdToken: idToken})
+	responseBody, err := json.Marshal(RefreshTokenResponse{AccessToken: accessToken, IdToken: idToken})
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error creating response body, %s", err)
 		log.Print(errorMessage)
@@ -61,13 +59,12 @@ func Login(request events.APIGatewayV2HTTPRequest) (events.APIGatewayProxyRespon
 	return response, nil
 }
 
-type LoginResponse struct {
-	AccessToken  string `json:"accessToken"`
-	IdToken      string `json:"idToken"`
-	RefreshToken string `json:"refreshToken"`
+type RefreshTokenResponse struct {
+	AccessToken string `json:"accessToken"`
+	IdToken     string `json:"idToken"`
 }
 
-type LoginRequest struct {
-	Username *string `json:"username" required:"true"`
-	Password *string `json:"password" required:"true"`
+type RefreshTokenRequest struct {
+	RefreshToken *string `json:"refreshToken" required:"true"`
+	Username     *string `json:"username" required:"true"`
 }
