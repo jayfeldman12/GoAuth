@@ -26,25 +26,18 @@ func ConfirmSignUp(request events.APIGatewayV2HTTPRequest) (events.APIGatewayPro
 	}
 
 	confirmSignUpRequest := cognitoidentityprovider.ConfirmSignUpInput{
-		ClientId: &AppContext.CognitoClientID,
-		SecretHash: aws.String(
-			ComputeSecretHash(
-				AppContext.CognitoClientID,
-				AppContext.CognitoClientSecret,
-				*requestBody.Username,
-			),
-		),
+		ClientId:         &AppContext.CognitoClientID,
+		SecretHash:       aws.String(ComputeSecretHash(*requestBody.Username)),
 		Username:         requestBody.Username,
 		ConfirmationCode: requestBody.Code,
 	}
 
-	result, err := AppContext.CognitoClient.ConfirmSignUp(&confirmSignUpRequest)
+	_, err = AppContext.CognitoClient.ConfirmSignUp(&confirmSignUpRequest)
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error signing up user %s", err)
 		log.Print(errorMessage)
 		return events.APIGatewayProxyResponse{StatusCode: 400, Body: errorMessage}, nil
 	}
-	log.Printf("User signed up %s", result.GoString)
 
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error creating response body, %s", err)

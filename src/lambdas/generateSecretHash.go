@@ -6,7 +6,9 @@ import (
 	"encoding/base64"
 )
 
-func ComputeSecretHash(clientId, clientSecret, username string) string {
+func ComputeSecretHash(username string) string {
+	clientId := AppContext.CognitoClientID
+	clientSecret := AppContext.CognitoClientSecret
 	mac := hmac.New(sha256.New, []byte(clientSecret))
 	mac.Write([]byte(username + clientId))
 

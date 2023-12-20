@@ -12,5 +12,5 @@ func init() {
 }
 
 func main() {
-	lambda.Start(lambdas.Login)
+	lambda.Start(lambdas.ConfirmSignUp)
 }

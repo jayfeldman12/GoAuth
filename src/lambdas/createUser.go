@@ -27,16 +27,10 @@ func CreateUser(request events.APIGatewayV2HTTPRequest) (events.APIGatewayProxyR
 	}
 
 	signUpRequest := cognitoidentityprovider.SignUpInput{
-		ClientId: &AppContext.CognitoClientID,
-		SecretHash: aws.String(
-			ComputeSecretHash(
-				AppContext.CognitoClientID,
-				AppContext.CognitoClientSecret,
-				*user.Username,
-			),
-		),
-		Username: user.Username,
-		Password: user.Password,
+		ClientId:   &AppContext.CognitoClientID,
+		SecretHash: aws.String(ComputeSecretHash(*user.Username)),
+		Username:   user.Username,
+		Password:   user.Password,
 		UserAttributes: []*cognitoidentityprovider.AttributeType{
 			{
 				Name:  aws.String("email"),
