@@ -6,5 +6,6 @@
     "production": {
       "baseUrl": "https://589tzcaozj.execute-api.us-east-2.amazonaws.com"
     }
-  }
+  },
+  "cSpell.words": ["cognitoidentityprovider"]
 }
