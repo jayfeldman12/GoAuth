@@ -1,7 +1,7 @@
 package main
 
 import (
-	"GoAuth/scripts"
+	"GoAuth/cmd/common"
 )
 
 func main() {
@@ -15,6 +15,6 @@ func main() {
 	commandBase := "go run ./cmd/lambdaBuild/lambdaBuild.go -- "
 
 	for _, resource := range resources {
-		scripts.Execute(commandBase + resource)
+		common.Execute(commandBase + resource)
 	}
 }
