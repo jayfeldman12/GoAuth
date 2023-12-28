@@ -11,6 +11,7 @@ func main() {
 		"./cmd/login/loginCmd.go",
 		"./cmd/refreshToken/refreshTokenCmd.go",
 		"./cmd/securedResource/securedResourceCmd.go",
+		"./cmd/authorizer/authorizerCmd.go",
 	}
 	commandBase := "go run ./cmd/lambdaBuild/lambdaBuild.go -- "
 
