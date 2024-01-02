@@ -12,5 +12,5 @@ func init() {
 }
 
 func main() {
-	lambda.Start(lambdas.CreateUser)
+	lambda.Start(lambdas.CreateUserHandler)
 }

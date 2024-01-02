@@ -11,7 +11,11 @@ import (
 	"github.com/aws/aws-sdk-go/service/cognitoidentityprovider"
 )
 
-func CreateUser(request events.APIGatewayV2HTTPRequest) (events.APIGatewayProxyResponse, error) {
+func CreateUserHandler(request events.APIGatewayV2HTTPRequest) (events.APIGatewayProxyResponse, error) {
+	return createUser(request, AppContext)
+}
+
+func createUser(request events.APIGatewayV2HTTPRequest, appContext types.Context) (events.APIGatewayProxyResponse, error) {
 	var user types.User
 	err := json.Unmarshal([]byte(request.Body), &user)
 	if err != nil {
@@ -27,7 +31,7 @@ func CreateUser(request events.APIGatewayV2HTTPRequest) (events.APIGatewayProxyR
 	}
 
 	signUpRequest := cognitoidentityprovider.SignUpInput{
-		ClientId:   &AppContext.CognitoClientID,
+		ClientId:   &appContext.CognitoClientID,
 		SecretHash: aws.String(ComputeSecretHash(*user.Username)),
 		Username:   user.Username,
 		Password:   user.Password,
@@ -57,8 +61,7 @@ func CreateUser(request events.APIGatewayV2HTTPRequest) (events.APIGatewayProxyR
 			Value: user.Pet,
 		})
 	}
-
-	result, err := AppContext.CognitoClient.SignUp(&signUpRequest)
+	result, err := appContext.CognitoClient.SignUp(&signUpRequest)
 	if err != nil {
 		errorMessage := fmt.Sprintf("Error signing up user %s", err)
 		log.Print(errorMessage)

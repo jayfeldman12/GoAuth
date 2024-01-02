@@ -34,7 +34,6 @@ func ValidateToken(tokenString string) (*jwt.Token, error) {
 	// Parse the token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 
-		// Check the signing method
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
@@ -44,11 +43,6 @@ func ValidateToken(tokenString string) (*jwt.Token, error) {
 			return nil, fmt.Errorf("missing 'kid' in token header")
 		}
 
-		if !ok {
-			return nil, fmt.Errorf("invalid jwk keys format")
-		}
-
-		// Loop through the JWK keys to find the matching "kid"
 		for _, jwk := range jwks {
 			if jwk.Kid == kid {
 				n := jwk.N

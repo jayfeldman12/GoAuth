@@ -15,8 +15,16 @@ func Init() {
 	conf := &aws.Config{Region: aws.String(cognitoRegion)}
 	mySession := session.Must(session.NewSession(conf))
 
+	client := cognitoidentityprovider.New(mySession)
+
+	cognitoClient := types.CognitoClient{
+		SignUp:            client.SignUp,
+		ConfirmSignUp:     client.ConfirmSignUp,
+		AdminInitiateAuth: client.AdminInitiateAuth,
+	}
+
 	lambdas.AppContext = types.Context{
-		CognitoClient:       cognitoidentityprovider.New(mySession),
+		CognitoClient:       &cognitoClient,
 		UserPoolID:          os.Getenv("COGNITO_USER_POOL_ID"),
 		CognitoClientID:     os.Getenv("COGNITO_APP_CLIENT_ID"),
 		CognitoClientSecret: os.Getenv("COGNITO_APP_CLIENT_SECRET"),
